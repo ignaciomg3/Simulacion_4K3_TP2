@@ -3,6 +3,8 @@ from tkinter import ttk, messagebox
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+import pandas as pd
+import openpyxl
 import sys
 import os
 
@@ -82,7 +84,10 @@ class SimuladorDistribucionesApp:
         
         # Botón para generar
         ttk.Button(frame_config, text="Generar Números", 
-                   command=self.generar_numeros).grid(row=5, column=0, columnspan=2, padx=5, pady=10)
+               command=self.generar_numeros).grid(row=5, column=1, padx=(5, 20), pady=10, sticky="e")
+        # Botón para exportar datos
+        self.btn_export = ttk.Button(frame_config, text="Exportar", command=self.export_to_excel)
+        self.btn_export.grid(row=5, column=0, padx=(20, 5), pady=10, sticky="w")
     
     def crear_frame_grafico(self):
         """Crea el panel para mostrar el histograma"""
@@ -305,6 +310,19 @@ class SimuladorDistribucionesApp:
                 frecuencias[i],
                 f"{frecuencias_relativas[i]:.4f}"
             ))
+
+    def export_to_excel(self):
+        data = []
+        for item in self.tree.get_children():
+            data.append(self.tree.item(item)['values'])
+        
+        df = pd.DataFrame(data, columns=["Hora", "HoraFin", "Estado1", "Estado2", "Estado3"])
+        
+        try:
+            df.to_excel("datos.xlsx", index=False)
+            messagebox.showinfo("Éxito", "Datos exportados a datos.xlsx")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo exportar: {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
