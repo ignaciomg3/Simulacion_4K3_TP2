@@ -100,7 +100,7 @@ class TestGeneradorCongruencialLineal(unittest.TestCase):
         
         # Probamos distribución normal
         mu, sigma = 5, 2
-        normal = generar_distribucion_normal(mu, sigma, n)
+        normal = generar_distribucion_normal(n, mu, sigma)
         
         # Verificamos propiedades básicas de distribución normal
         self.assertAlmostEqual(statistics.mean(normal), mu, delta=0.3)
