@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
 import pandas as pd
-import openpyxl
 import sys
 import os
 
@@ -316,7 +315,7 @@ class SimuladorDistribucionesApp:
         for item in self.tree.get_children():
             data.append(self.tree.item(item)['values'])
         
-        df = pd.DataFrame(data, columns=["Hora", "HoraFin", "Estado1", "Estado2", "Estado3"])
+        df = pd.DataFrame(data, columns=["Intervalo", "Límite Inferior", "Límite Superior", "Frecuencia", "Frecuencia Relativa"])
         
         try:
             df.to_excel("datos.xlsx", index=False)
