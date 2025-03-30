@@ -286,4 +286,14 @@ class SimuladorDistribucionesApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = SimuladorDistribucionesApp(root)
+
+    # Define a function to handle the window close event
+    def on_closing():
+        if messagebox.askokcancel("Salir", "¿Estás seguro de que deseas cerrar la aplicación?"):
+            root.destroy()  # Close the Tkinter window
+            sys.exit()  # Ensure the program terminates completely
+
+    # Bind the close event to the custom function
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+
     root.mainloop()

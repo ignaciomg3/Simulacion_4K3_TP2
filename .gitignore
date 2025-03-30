@@ -82,3 +82,6 @@ desktop.ini
 
 # Excel spreadsheets
 *.xlsx
+
+# Pycharm
+*.pyc
