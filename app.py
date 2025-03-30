@@ -1,8 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-<<<<<<< HEAD
-import pandas as pd
-=======
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
@@ -11,7 +8,6 @@ import os
 
 # Añadir ruta del proyecto al PYTHONPATH para importaciones
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
->>>>>>> feat/generador_distribuciones
 
 # Importar los generadores
 from src.Generadores.GeneradorCongruencialLineal import GeneradorCongruencialLineal
@@ -22,29 +18,6 @@ from src.Distribuciones.Normal import generar_distribucion_normal
 class SimuladorDistribucionesApp:
     def __init__(self, root):
         self.root = root
-<<<<<<< HEAD
-        self.root.title("Simulación")
-
-        # Input para el número de simulaciones
-        tk.Label(root, text="Número de simulaciones:").grid(row=0, column=0, padx=5, pady=5)
-        self.num_simulaciones = tk.Entry(root)
-        self.num_simulaciones.grid(row=0, column=1, padx=5, pady=5)
-
-        # Botón para crear simulación
-        self.btn_crear = tk.Button(root, text="Crear Simulación", command=self.crear_simulacion)
-        self.btn_crear.grid(row=0, column=2, padx=5, pady=5)
-
-        # Botón para exportar datos
-        self.btn_export = tk.Button(root, text="Exportar", command=self.export_to_excel)
-        self.btn_export.grid(row=0, column=3, padx=5, pady=5)
-
-        # Tabla (Treeview) para mostrar la grilla
-        columnas = ("Hora", "HoraFin", "Estado1", "Estado2", "Estado3")
-        self.tree = ttk.Treeview(root, columns=columnas, show="headings")
-
-        # Configurar encabezados de la tabla
-        for col in columnas:
-=======
         self.root.title("Simulador de Distribuciones Aleatorias")
         self.root.geometry("1200x800")
         
@@ -138,7 +111,6 @@ class SimuladorDistribucionesApp:
         
         # Configurar encabezados y anchos
         for idx, col in enumerate(columnas):
->>>>>>> feat/generador_distribuciones
             self.tree.heading(col, text=col)
             self.tree.column(col, width=100)
         
