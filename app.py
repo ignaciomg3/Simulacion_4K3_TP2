@@ -224,46 +224,6 @@ class SimuladorDistribucionesApp:
         self.fig.tight_layout()
         self.canvas.draw()
     
-    def crear_tabla_frecuencias(self):
-        """Genera la tabla de frecuencias basada en el histograma"""
-        # Limpiar tabla anterior
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-        
-        # Obtener número de intervalos
-        num_intervalos = int(self.num_intervalos.get())
-        
-        # Calcular límites de intervalos
-        min_val = min(self.numeros_generados)
-        max_val = max(self.numeros_generados)
-        ancho = (max_val - min_val) / num_intervalos
-        
-        # Contar frecuencias
-        frecuencias = [0] * num_intervalos
-        for num in self.numeros_generados:
-            idx = min(int((num - min_val) / ancho), num_intervalos - 1)
-            frecuencias[idx] += 1
-        
-        # Calcular frecuencias relativas
-        total = len(self.numeros_generados)
-        frecuencias_relativas = [f/total for f in frecuencias]
-        
-        # Llenar tabla
-        for i in range(num_intervalos):
-            limite_inf = min_val + i * ancho
-            limite_sup = min_val + (i + 1) * ancho
-            
-            # Para el último intervalo, asegurarse de incluir el valor máximo
-            if i == num_intervalos - 1:
-                limite_sup = max_val
-            
-            self.tree.insert("", "end", values=(
-                f"Intervalo {i+1}",
-                f"{limite_inf:.4f}",
-                f"{limite_sup:.4f}",
-                frecuencias[i],
-                f"{frecuencias_relativas[i]:.4f}"
-            ))
 
     def crear_tabla_frecuencias(self):
         """Genera la tabla de frecuencias basada en el histograma"""
