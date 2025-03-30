@@ -22,8 +22,13 @@ Sobre esta serie se debe realizar el histograma de frecuencias (no gráfico de b
 
 ## Integrantes
 
-- **Nombre y Legajo 1:** _[Pendiente]_  
-- **Nombre y Legajo 2:** _[Pendiente]_  
-- **Nombre y Legajo 3:** _[Pendiente]_  
+- **Aguzzi Enzo:** _[Pendiente]_  
+- **Basta Mauricio:** _[Pendiente]_  
+- **Esposito Nicolas:** _[Pendiente]_  
+- **García Bruno:** _[Pendiente]_ 
+- **Giron Joaquin:** _[Pendiente]_ 
+- **Juncos Conrado:** _[Pendiente]_ 
+- **Mongi Ignacio:** _[Pendiente]_ 
+- **Zuloaga Sabrina:** _[Pendiente]_ 
 
 ---
