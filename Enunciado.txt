@@ -1,7 +1,11 @@
 
 Crear un aplicativo que genere una serie de números aleatorios (4 dígitos decimales)
-de variables aleatorias para las siguientes distribuciones: uniforme [a, b], exponencial y
-normal. Para generar el número aleatorio uniforme continuo entre 0 y 1 utilizar la
+de variables aleatorias para las siguientes distribuciones: 
+1- uniforme [a, b], 
+2- exponencial y
+3- normal. 
+
+Para generar el número aleatorio uniforme continuo entre 0 y 1 utilizar la
 función nativa del lenguaje.
 
 El usuario podrá ingresar el tamaño de muestra deseado (hasta 1.000.000), y los parámetros
