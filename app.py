@@ -1,8 +1,8 @@
 from Entidades import Fila  # Importamos la clase Fila
 from Entidades.Fila import Fila  # Importamos la clase Fila
 import tkinter as tk
-from tkinter import ttk
-
+from tkinter import ttk, messagebox
+import pandas as pd
 
 class SimulacionApp:
     def __init__(self, root):
@@ -17,6 +17,10 @@ class SimulacionApp:
         # Botón para crear simulación
         self.btn_crear = tk.Button(root, text="Crear Simulación", command=self.crear_simulacion)
         self.btn_crear.grid(row=0, column=2, padx=5, pady=5)
+
+        # Botón para exportar datos
+        self.btn_export = tk.Button(root, text="Exportar", command=self.export_to_excel)
+        self.btn_export.grid(row=0, column=3, padx=5, pady=5)
 
         # Tabla (Treeview) para mostrar la grilla
         columnas = ("Hora", "HoraFin", "Estado1", "Estado2", "Estado3")
@@ -47,6 +51,19 @@ class SimulacionApp:
         filas = Fila.generar_filas(cantidad)
         for fila in filas:
             self.tree.insert("", "end", values=(fila.hora, fila.hora_fin, fila.estado1, fila.estado2, fila.estado3))
+
+    def export_to_excel(self):
+        data = []
+        for item in self.tree.get_children():
+            data.append(self.tree.item(item)['values'])
+        
+        df = pd.DataFrame(data, columns=["Hora", "HoraFin", "Estado1", "Estado2", "Estado3"])
+        
+        try:
+            df.to_excel("datos.xlsx", index=False)
+            messagebox.showinfo("Éxito", "Datos exportados a datos.xlsx")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo exportar: {e}")
 
 if __name__ == "__main__":
     root = tk.Tk()
