@@ -197,29 +197,32 @@ class SimuladorDistribucionesApp:
             messagebox.showerror("Error", f"Ha ocurrido un error: {str(e)}")
     
     def crear_histograma(self, titulo):
-        """Crea el histograma con los números generados"""
+        """Crea un gráfico continuo con los números generados"""
         # Limpiar gráfico anterior
         self.ax.clear()
-        
-        # Obtener número de intervalos
-        num_intervalos = int(self.num_intervalos.get())
-        
-        # Crear histograma
-        n, bins, patches = self.ax.hist(self.numeros_generados, bins=num_intervalos, 
-                                        edgecolor='black', alpha=0.7)
-        
-        # Calcular frecuencia máxima para escala Y
-        max_freq = max(n) * 1.1
-        
+    
+        # Crear un rango de valores para la curva
+        x = np.linspace(min(self.numeros_generados), max(self.numeros_generados), 1000)
+    
+        # Calcular la densidad de probabilidad usando KDE
+        from scipy.stats import gaussian_kde
+        kde = gaussian_kde(self.numeros_generados)
+        y = kde(x)
+    
+        # Dibujar la curva continua
+        self.ax.plot(x, y, label="Densidad estimada", color="blue", linewidth=2)
+    
         # Configurar etiquetas y título
         self.ax.set_xlabel("Valor")
-        self.ax.set_ylabel("Frecuencia")
-        self.ax.set_title(f"Histograma de {titulo}\n({len(self.numeros_generados)} números, {num_intervalos} intervalos)")
-        self.ax.set_ylim(0, max_freq)
+        self.ax.set_ylabel("Densidad")
+        self.ax.set_title(f"Gráfico Continuo de {titulo}\n({len(self.numeros_generados)} números)")
         
         # Añadir cuadrícula
         self.ax.grid(axis='y', linestyle='--', alpha=0.7)
-        
+    
+        # Añadir leyenda
+        self.ax.legend()
+    
         # Aplicar cambios
         self.fig.tight_layout()
         self.canvas.draw()
