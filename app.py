@@ -3,9 +3,10 @@ from tkinter import ttk, messagebox
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import numpy as np
+import pandas as pd
 import sys
 import os
-
+import seaborn as sns
 # Añadir ruta del proyecto al PYTHONPATH para importaciones
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -82,7 +83,10 @@ class SimuladorDistribucionesApp:
         
         # Botón para generar
         ttk.Button(frame_config, text="Generar Números", 
-                   command=self.generar_numeros).grid(row=5, column=0, columnspan=2, padx=5, pady=10)
+               command=self.generar_numeros).grid(row=5, column=1, padx=(5, 20), pady=10, sticky="e")
+        # Botón para exportar datos
+        self.btn_export = ttk.Button(frame_config, text="Exportar", command=self.export_to_excel)
+        self.btn_export.grid(row=5, column=0, padx=(20, 5), pady=10, sticky="w")
     
     def crear_frame_grafico(self):
         """Crea el panel para mostrar el histograma"""
@@ -183,10 +187,10 @@ class SimuladorDistribucionesApp:
                 self.numeros_generados = generar_distribucion_normal(cantidad, mu, sigma, self.generador)
                 titulo = f"Distribución Normal (μ={mu}, σ={sigma})"
             
-            # Generar histograma y tabla
-            self.crear_histograma(titulo)
+            # Generar KDE en lugar de histograma
+            self.crear_kde(titulo)
             self.crear_tabla_frecuencias()
-            
+        
         except ValueError as e:
             messagebox.showerror("Error de entrada", str(e))
         except Exception as e:
@@ -220,46 +224,6 @@ class SimuladorDistribucionesApp:
         self.fig.tight_layout()
         self.canvas.draw()
     
-    def crear_tabla_frecuencias(self):
-        """Genera la tabla de frecuencias basada en el histograma"""
-        # Limpiar tabla anterior
-        for item in self.tree.get_children():
-            self.tree.delete(item)
-        
-        # Obtener número de intervalos
-        num_intervalos = int(self.num_intervalos.get())
-        
-        # Calcular límites de intervalos
-        min_val = min(self.numeros_generados)
-        max_val = max(self.numeros_generados)
-        ancho = (max_val - min_val) / num_intervalos
-        
-        # Contar frecuencias
-        frecuencias = [0] * num_intervalos
-        for num in self.numeros_generados:
-            idx = min(int((num - min_val) / ancho), num_intervalos - 1)
-            frecuencias[idx] += 1
-        
-        # Calcular frecuencias relativas
-        total = len(self.numeros_generados)
-        frecuencias_relativas = [f/total for f in frecuencias]
-        
-        # Llenar tabla
-        for i in range(num_intervalos):
-            limite_inf = min_val + i * ancho
-            limite_sup = min_val + (i + 1) * ancho
-            
-            # Para el último intervalo, asegurarse de incluir el valor máximo
-            if i == num_intervalos - 1:
-                limite_sup = max_val
-            
-            self.tree.insert("", "end", values=(
-                f"Intervalo {i+1}",
-                f"{limite_inf:.4f}",
-                f"{limite_sup:.4f}",
-                frecuencias[i],
-                f"{frecuencias_relativas[i]:.4f}"
-            ))
 
     def crear_tabla_frecuencias(self):
         """Genera la tabla de frecuencias basada en el histograma"""
@@ -306,12 +270,33 @@ class SimuladorDistribucionesApp:
                 f"{frecuencias_relativas[i]:.4f}"
             ))
 
+    
+    def crear_kde(self, titulo):
+        """Crea una gráfica de densidad KDE con los números generados"""
+        # Limpiar gráfico anterior
+        self.ax.clear()
+        
+        # Crear KDE
+        sns.kdeplot(self.numeros_generados, ax=self.ax, fill=True, color="blue", alpha=0.5)
+        
+        # Configurar etiquetas y título
+        self.ax.set_xlabel("Valor")
+        self.ax.set_ylabel("Densidad")
+        self.ax.set_title(f"Densidad de {titulo}\n({len(self.numeros_generados)} números)")
+        
+        # Añadir cuadrícula
+        self.ax.grid(axis='y', linestyle='--', alpha=0.7)
+        
+        # Aplicar cambios
+        self.fig.tight_layout()
+        self.canvas.draw()
+        
     def export_to_excel(self):
         data = []
         for item in self.tree.get_children():
             data.append(self.tree.item(item)['values'])
         
-        df = pd.DataFrame(data, columns=["Hora", "HoraFin", "Estado1", "Estado2", "Estado3"])
+        df = pd.DataFrame(data, columns=["Intervalo", "Límite Inferior", "Límite Superior", "Frecuencia", "Frecuencia Relativa"])
         
         try:
             df.to_excel("datos.xlsx", index=False)
@@ -322,4 +307,14 @@ class SimuladorDistribucionesApp:
 if __name__ == "__main__":
     root = tk.Tk()
     app = SimuladorDistribucionesApp(root)
+
+    # Define a function to handle the window close event
+    def on_closing():
+        if messagebox.askokcancel("Salir", "¿Estás seguro de que deseas cerrar la aplicación?"):
+            root.destroy()  # Close the Tkinter window
+            sys.exit()  # Ensure the program terminates completely
+
+    # Bind the close event to the custom function
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+
     root.mainloop()

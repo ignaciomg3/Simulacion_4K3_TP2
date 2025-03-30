@@ -5,14 +5,14 @@ de variables aleatorias para las siguientes distribuciones:
 2- exponencial y
 3- normal. 
 
-Para generar el número aleatorio uniforme continuo entre 0 y 1 utilizar la
+1 - Para generar el número aleatorio uniforme continuo entre 0 y 1 utilizar la
 función nativa del lenguaje.
 
-El usuario podrá ingresar el tamaño de muestra deseado (hasta 1.000.000), y los parámetros
+2 - El usuario podrá ingresar el tamaño de muestra deseado (hasta 1.000.000), y los parámetros
 requeridos según la distribución seleccionada. La serie de números generada debe poder ser
 visualizada.
 
-Sobre esta serie se debe realizar el histograma de frecuencias (no gráfico de barras) para 10, 15, 20
-ó 30 intervalos (a seleccionar) donde se muestren las frecuencias observadas. Mostrar la tabla de
-frecuencias. El gráfico debe tener todos los rótulos en los ejes, límites de los intervalos, frecuencia,
+3- Sobre esta serie se debe realizar el histograma de frecuencias (no gráfico de barras) para 10, 15, 20
+ó 30 intervalos (a seleccionar) donde se muestren las frecuencias observadas. 
+Mostrar la tabla de frecuencias. El gráfico debe tener todos los rótulos en los ejes, límites de los intervalos, frecuencia,
 etc.
