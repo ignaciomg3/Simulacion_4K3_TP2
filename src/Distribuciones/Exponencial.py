@@ -1,4 +1,6 @@
 import math
+from src.Generadores.generadorCongruencialLineal import GeneradorCongruencial
+
 
 def generar_exponencial(tamaño, lambd, generador=None):
     """
@@ -14,8 +16,8 @@ def generar_exponencial(tamaño, lambd, generador=None):
     """
     # Si no se proporciona un generador, crear uno con parámetros predeterminados
     if generador is None:
-        from ..Generadores.GeneradorCongruencialLineal import GeneradorCongruencialLineal
-        generador = GeneradorCongruencialLineal(
+        
+        generador = GeneradorCongruencial(
             semilla=12345,
             a=1103515245,  # Parámetros para período máximo
             c=12345,

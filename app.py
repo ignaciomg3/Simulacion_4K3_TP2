@@ -13,7 +13,7 @@ from funciones import actualizar_etiquetas_parametros, generar_numeros, crear_kd
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
 # Importar los generadores
-from src.Generadores.GeneradorCongruencialLineal import GeneradorCongruencialLineal
+from src.Generadores.generadorCongruencialLineal import GeneradorCongruencial
 from src.Distribuciones.Uniforme import generar_uniforme
 from src.Distribuciones.Exponencial import generar_exponencial
 from src.Distribuciones.Normal import generar_distribucion_normal
@@ -22,7 +22,8 @@ class SimuladorDistribucionesApp:
     def __init__(self, root):
         self.root = root    
         self.root.title("Simulador de Distribuciones Aleatorias")
-        self.root.geometry("1200x800")
+        self.root.geometry("2200x1500")
+        self.root.state('zoomed')  # Inicia la ventana en modo pantalla completa
         
         # Variables para almacenar la configuración
         self.distribucion_seleccionada = tk.StringVar(value="Uniforme")
@@ -35,7 +36,7 @@ class SimuladorDistribucionesApp:
         self.numeros_generados = []
         
         # Crear el generador congruencial lineal
-        self.generador = GeneradorCongruencialLineal(
+        self.generador = GeneradorCongruencial(
             semilla=12345,
             a=1103515245,
             c=12345,
@@ -53,8 +54,9 @@ class SimuladorDistribucionesApp:
     def crear_frame_configuracion(self):
         """Crea el panel de configuración para seleccionar distribuciones y parámetros"""
         frame_config = ttk.LabelFrame(self.root, text="Configuración")
-        frame_config.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
-        
+        frame_config.grid(row=0, column=0, padx=10, pady=15, sticky="nw")
+        #frame_config.place(relx=0, rely=0, relwidth=0.6, relheight=0.6)
+
         # Selector de distribución
         ttk.Label(frame_config, text="Distribución:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
         distribuciones = ["Uniforme", "Exponencial", "Normal"]

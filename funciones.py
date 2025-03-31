@@ -1,73 +1,133 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from tkinter import messagebox
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from src.Distribuciones.Uniforme import generar_uniforme
+from src.Distribuciones.Exponencial import generar_exponencial
+from src.Distribuciones.Normal import generar_distribucion_normal
 
-def actualizar_etiquetas_parametros(distribucion, lbl_param1, lbl_param2, entry_param2, param1, param2):
+import tkinter as tk
+from tkinter import ttk
+
+def actualizar_etiquetas_parametros(self, event=None):
     """Actualiza las etiquetas de los parámetros según la distribución seleccionada"""
+    distribucion = self.distribucion_seleccionada.get()
+        
     if distribucion == "Uniforme":
-        lbl_param1.configure(text="Límite inferior (a):")
-        lbl_param2.configure(text="Límite superior (b):")
-        entry_param2.configure(state="normal")
-        param1.set("0")
-        param2.set("1")
-
+        self.lbl_param1.configure(text="Límite inferior (a):")
+        self.lbl_param2.configure(text="Límite superior (b):")
+        self.entry_param2.configure(state="normal")
+        self.param1.set("0")
+        self.param2.set("1")
+    
     elif distribucion == "Exponencial":
-        lbl_param1.configure(text="Lambda (λ):")
-        lbl_param2.configure(text="")
-        entry_param2.configure(state="disabled")
-        param1.set("1")
-        param2.set("")
-
+        self.lbl_param1.configure(text="Lambda (λ):")
+        self.lbl_param2.configure(text="")
+        self.entry_param2.configure(state="disabled")
+        self.param1.set("1")
+        self.param2.set("")
+    
     elif distribucion == "Normal":
-        lbl_param1.configure(text="Media (μ):")
-        lbl_param2.configure(text="Desviación estándar (σ):")
-        entry_param2.configure(state="normal")
-        param1.set("0")
-        param2.set("1")
+        self.lbl_param1.configure(text="Media (μ):")
+        self.lbl_param2.configure(text="Desviación estándar (σ):")
+        self.entry_param2.configure(state="normal")
+        self.param1.set("0")
+        self.param2.set("1")
 
-
-def generar_numeros(cantidad, distribucion, param1, param2, generador):
+def generar_numeros(self):
     """Genera números aleatorios según la configuración seleccionada"""
     try:
-        cantidad = int(cantidad)
+        # Validar parámetros
+        cantidad = int(self.cantidad_numeros.get())
         if not (0 < cantidad <= 1000000):
             raise ValueError("El tamaño de muestra debe ser mayor a 0 y menor o igual a 1,000,000")
-
+        
+        distribucion = self.distribucion_seleccionada.get()
+        
         if distribucion == "Uniforme":
-            a = float(param1)
-            b = float(param2)
+            a = float(self.param1.get())
+            b = float(self.param2.get())
             if a >= b:
                 raise ValueError("El límite inferior debe ser menor que el límite superior")
-
-            numeros_generados = np.random.uniform(a, b, cantidad)
+            
+            self.numeros_generados = generar_uniforme(cantidad, a, b, self.generador)
             titulo = f"Distribución Uniforme [{a}, {b}]"
-
+        
         elif distribucion == "Exponencial":
-            lambd = float(param1)
+            lambd = float(self.param1.get())
             if lambd <= 0:
                 raise ValueError("Lambda debe ser mayor que 0")
-
-            numeros_generados = np.random.exponential(1/lambd, cantidad)
+            
+            self.numeros_generados = generar_exponencial(cantidad, lambd, self.generador)
             titulo = f"Distribución Exponencial (λ={lambd})"
-
+        
         elif distribucion == "Normal":
-            mu = float(param1)
-            sigma = float(param2)
+            mu = float(self.param1.get())
+            sigma = float(self.param2.get())
             if sigma <= 0:
                 raise ValueError("La desviación estándar debe ser mayor que 0")
-
-            numeros_generados = np.random.normal(mu, sigma, cantidad)
+            
+            self.numeros_generados = generar_distribucion_normal(cantidad, mu, sigma, self.generador)
             titulo = f"Distribución Normal (μ={mu}, σ={sigma})"
-
-        return numeros_generados, titulo
-
+        
+        # Generar KDE en lugar de histograma
+        self.crear_kde(titulo)
+        self.crear_tabla_frecuencias()
+    
     except ValueError as e:
         messagebox.showerror("Error de entrada", str(e))
-        return None, None
     except Exception as e:
         messagebox.showerror("Error", f"Ha ocurrido un error: {str(e)}")
-        return None, None
 
+
+    def crear_histograma(self, titulo):
+        """Crea el histograma con los números generados"""
+        # Limpiar gráfico anterior
+        self.ax.clear()
+        
+        # Obtener número de intervalos
+        num_intervalos = int(self.num_intervalos.get())
+        
+        # Crear histograma
+        n, bins, patches = self.ax.hist(self.numeros_generados, bins=num_intervalos, 
+                                        edgecolor='black', alpha=0.7)
+        
+        # Calcular frecuencia máxima para escala Y
+        max_freq = max(n) * 1.1
+        
+        # Configurar etiquetas y título
+        self.ax.set_xlabel("Valor")
+        self.ax.set_ylabel("Frecuencia")
+        self.ax.set_title(f"Histograma de {titulo}\n({len(self.numeros_generados)} números, {num_intervalos} intervalos)")
+        self.ax.set_ylim(0, max_freq)
+        
+        # Añadir cuadrícula
+        self.ax.grid(axis='y', linestyle='--', alpha=0.7)
+        
+        # Aplicar cambios
+        self.fig.tight_layout()
+        self.canvas.draw()
+    
+
+    def crear_kde(self, titulo):
+        """Crea una gráfica de densidad KDE con los números generados"""
+        # Limpiar gráfico anterior
+        self.ax.clear()
+        
+        # Crear KDE
+        sns.kdeplot(self.numeros_generados, ax=self.ax, fill=True, color="blue", alpha=0.5)
+        
+        # Configurar etiquetas y título
+        self.ax.set_xlabel("Valor")
+        self.ax.set_ylabel("Densidad")
+        self.ax.set_title(f"Densidad de {titulo}\n({len(self.numeros_generados)} números)")
+        
+        # Añadir cuadrícula
+        self.ax.grid(axis='y', linestyle='--', alpha=0.7)
+        
+        # Aplicar cambios
+        self.fig.tight_layout()
+        self.canvas.draw()
 
 def crear_kde(ax, numeros_generados, titulo):
     """Genera un KDE en lugar de un histograma"""
@@ -77,3 +137,99 @@ def crear_kde(ax, numeros_generados, titulo):
     ax.set_xlabel("Valor")
     ax.set_ylabel("Densidad")
     ax.figure.tight_layout()
+
+
+def crear_frame_configuracion(self, distribucion, cantNumeros, intervalos, param1, param2):
+    """Crea el panel de configuración para seleccionar distribuciones y parámetros"""
+    frame_config = ttk.LabelFrame(self.root, text="Configuración")
+    frame_config.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
+    
+    # Selector de distribución
+    ttk.Label(frame_config, text="Distribución:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    distribuciones = ["Uniforme", "Exponencial", "Normal"]
+    combo_dist = ttk.Combobox(frame_config, textvariable=self.distribucion_seleccionada, 
+                                values=distribuciones, state="readonly")
+    combo_dist.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+    combo_dist.bind("<<ComboboxSelected>>", actualizar_etiquetas_parametros(self))
+    
+    # Cantidad de números
+    ttk.Label(frame_config, text="Tamaño de muestra:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+    ttk.Entry(frame_config, textvariable=self.cantidad_numeros).grid(row=1, column=1, padx=5, pady=5, sticky="w")
+    
+    # Número de intervalos para histograma
+    ttk.Label(frame_config, text="Número de intervalos:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+    intervalos = ["10", "15", "20", "30"]
+    ttk.Combobox(frame_config, textvariable=self.num_intervalos, 
+                    values=intervalos, state="readonly").grid(row=2, column=1, padx=5, pady=5, sticky="w")
+    
+    # Parámetros (etiquetas se actualizarán según la distribución)
+    self.lbl_param1 = ttk.Label(frame_config, text="Parámetro 1:")
+    self.lbl_param1.grid(row=3, column=0, padx=5, pady=5, sticky="w")
+    ttk.Entry(frame_config, textvariable=self.param1).grid(row=3, column=1, padx=5, pady=5, sticky="w")
+    
+    self.lbl_param2 = ttk.Label(frame_config, text="Parámetro 2:")
+    self.lbl_param2.grid(row=4, column=0, padx=5, pady=5, sticky="w")
+    self.entry_param2 = ttk.Entry(frame_config, textvariable=self.param2)
+    self.entry_param2.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+    
+    # Botón para generar
+    ttk.Button(frame_config, text="Generar Números", 
+            command=self.generar_numeros).grid(row=5, column=1, padx=(5, 20), pady=10, sticky="e")
+    # Botón para exportar datos
+    self.btn_export = ttk.Button(frame_config, text="Exportar", command=self.export_to_excel)
+    self.btn_export.grid(row=5, column=0, padx=(20, 5), pady=10, sticky="w")
+
+
+def crear_frame_grafico(self):
+        """Crea el panel para mostrar el histograma"""
+        frame_grafico = ttk.LabelFrame(self.root, text="Histograma")
+        frame_grafico.grid(row=0, column=1, rowspan=2, padx=10, pady=10, sticky="nsew")
+        
+        # Crear figura de matplotlib
+        self.fig, self.ax = plt.subplots(figsize=(6, 4), dpi=100)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=frame_grafico)
+        self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        
+        # Configurar gráfico inicial
+        self.ax.set_title("Histograma de Frecuencias")
+        self.ax.set_xlabel("Valor")
+        self.ax.set_ylabel("Frecuencia")
+        self.fig.tight_layout()
+    
+def crear_frame_tabla(self):
+        """Crea el panel para mostrar la tabla de frecuencias"""
+        frame_tabla = ttk.LabelFrame(self.root, text="Tabla de Frecuencias")
+        frame_tabla.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+        
+        # Crear Treeview para la tabla
+        columnas = ("Intervalo", "Límite Inferior", "Límite Superior", "Frecuencia", "Frecuencia Relativa")
+        self.tree = ttk.Treeview(frame_tabla, columns=columnas, show="headings", height=15)
+        
+        # Configurar encabezados y anchos
+        for idx, col in enumerate(columnas):
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=100)
+        
+        # Añadir scrollbar
+        scrollbar = ttk.Scrollbar(frame_tabla, orient="vertical", command=self.tree.yview)
+        self.tree.configure(yscrollcommand=scrollbar.set)
+        
+        # Posicionar elementos
+        self.tree.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+    
+
+def export_to_excel(self):
+    data = []
+    for item in self.tree.get_children():
+        data.append(self.tree.item(item)['values'])
+    
+    df = pd.DataFrame(data, columns=["Intervalo", "Límite Inferior", "Límite Superior", "Frecuencia", "Frecuencia Relativa"])
+    
+    try:
+        df.to_excel("datos.xlsx", index=False)
+        messagebox.showinfo("Éxito", "Datos exportados a datos.xlsx")
+    except Exception as e:
+        messagebox.showerror("Error", f"No se pudo exportar: {e}")
+
+

@@ -1,4 +1,4 @@
-class GeneradorCongruencialLineal:
+class GeneradorCongruencial:
     def __init__(self, semilla, a, c, m):
         """
         Inicializa el generador congruencial lineal.

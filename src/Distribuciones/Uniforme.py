@@ -1,3 +1,5 @@
+from src.Generadores.generadorCongruencialLineal import GeneradorCongruencial
+
 def generar_uniforme(tamaño, a, b, generador=None):
     """
     Genera números aleatorios con distribución uniforme en el intervalo [a, b].
@@ -18,9 +20,8 @@ def generar_uniforme(tamaño, a, b, generador=None):
 
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-        # Importar la clase GeneradorCongruencialLineal desde su ubicación
-        from src.Generadores.GeneradorCongruencialLineal import GeneradorCongruencialLineal  # Updated import path
-        generador = GeneradorCongruencialLineal(
+        
+        generador = GeneradorCongruencial(
             semilla=12345,
             a=1103515245,  # Parámetros para período máximo
             c=12345,

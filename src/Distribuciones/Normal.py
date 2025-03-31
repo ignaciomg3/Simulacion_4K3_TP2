@@ -1,4 +1,5 @@
 import math
+from src.Generadores.generadorCongruencialLineal import GeneradorCongruencial
 
 def generar_distribucion_normal(tamaño, mu, sigma, generador=None):
     """
@@ -22,9 +23,9 @@ def generar_distribucion_normal(tamaño, mu, sigma, generador=None):
         sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
         
         # Importar el generador
-        from src.Generadores.GeneradorCongruencialLineal import GeneradorCongruencialLineal
         
-        generador = GeneradorCongruencialLineal(
+        
+        generador = GeneradorCongruencial(
             semilla=12345,
             a=1103515245,
             c=12345,
