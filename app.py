@@ -7,6 +7,8 @@ import pandas as pd
 import sys
 import os
 import seaborn as sns
+from funciones import actualizar_etiquetas_parametros, generar_numeros, crear_kde
+
 # Añadir ruta del proyecto al PYTHONPATH para importaciones
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
@@ -18,7 +20,7 @@ from src.Distribuciones.Normal import generar_distribucion_normal
 
 class SimuladorDistribucionesApp:
     def __init__(self, root):
-        self.root = root
+        self.root = root    
         self.root.title("Simulador de Distribuciones Aleatorias")
         self.root.geometry("1200x800")
         
@@ -290,7 +292,7 @@ class SimuladorDistribucionesApp:
         # Aplicar cambios
         self.fig.tight_layout()
         self.canvas.draw()
-        
+
     def export_to_excel(self):
         data = []
         for item in self.tree.get_children():
