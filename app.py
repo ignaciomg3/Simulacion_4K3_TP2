@@ -1,3 +1,10 @@
+"""
+Correcciones de la branch
+- Volver atras la funcion KDE
+- Generar los numeros con 4 decimales
+- Visualizar serie de números
+- Exportar serie de numeros a Excel
+"""
 import tkinter as tk
 from tkinter import ttk, messagebox
 import matplotlib.pyplot as plt
@@ -50,6 +57,7 @@ class SimuladorDistribucionesApp:
         # Actualizar etiquetas de parámetros según distribución inicial
         self.actualizar_etiquetas_parametros()
     
+
     def crear_frame_configuracion(self):
         """Crea el panel de configuración para seleccionar distribuciones y parámetros"""
         frame_config = ttk.LabelFrame(self.root, text="Configuración")
@@ -86,10 +94,17 @@ class SimuladorDistribucionesApp:
         # Botón para generar
         ttk.Button(frame_config, text="Generar Números", 
                command=self.generar_numeros).grid(row=5, column=1, padx=(5, 20), pady=10, sticky="e")
-        # Botón para exportar datos
-        self.btn_export = ttk.Button(frame_config, text="Exportar", command=self.export_to_excel)
+        # Botón para exportar frecuencias
+        self.btn_export = ttk.Button(frame_config, text="Exportar frecuencias", command=self.export_frequency_to_excel)
         self.btn_export.grid(row=5, column=0, padx=(20, 5), pady=10, sticky="w")
+        # Botón para exportar serie de numeros
+        self.btn_export = ttk.Button(frame_config, text="Exportar números", command=self.export_numbers_to_excel)
+        self.btn_export.grid(row=6, column=0, padx=(20, 5), pady=10, sticky="w")
+        # Boton para abrir ventana con numeros
+        ttk.Button(frame_config, text="Mostrar Números", 
+                   command=self.mostrar_numeros_generados).grid(row=6, column=1, padx=(5, 20), pady=5, sticky="e")
     
+
     def crear_frame_grafico(self):
         """Crea el panel para mostrar el histograma"""
         frame_grafico = ttk.LabelFrame(self.root, text="Histograma")
@@ -106,6 +121,7 @@ class SimuladorDistribucionesApp:
         self.ax.set_ylabel("Frecuencia")
         self.fig.tight_layout()
     
+
     def crear_frame_tabla(self):
         """Crea el panel para mostrar la tabla de frecuencias"""
         frame_tabla = ttk.LabelFrame(self.root, text="Tabla de Frecuencias")
@@ -128,6 +144,7 @@ class SimuladorDistribucionesApp:
         self.tree.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
     
+
     def actualizar_etiquetas_parametros(self, event=None):
         """Actualiza las etiquetas de los parámetros según la distribución seleccionada"""
         distribucion = self.distribucion_seleccionada.get()
@@ -153,6 +170,7 @@ class SimuladorDistribucionesApp:
             self.param1.set("0")
             self.param2.set("1")
     
+
     def generar_numeros(self):
         """Genera números aleatorios según la configuración seleccionada"""
         try:
@@ -190,7 +208,7 @@ class SimuladorDistribucionesApp:
                 titulo = f"Distribución Normal (μ={mu}, σ={sigma})"
             
             # Generar KDE en lugar de histograma
-            self.crear_kde(titulo)
+            self.crear_histograma(titulo)
             self.crear_tabla_frecuencias()
         
         except ValueError as e:
@@ -198,6 +216,37 @@ class SimuladorDistribucionesApp:
         except Exception as e:
             messagebox.showerror("Error", f"Ha ocurrido un error: {str(e)}")
     
+
+    def mostrar_numeros_generados(self):
+        """Crea una nueva ventana para mostrar todos los números generados en columnas"""
+        # Crear una nueva ventana
+        ventana_numeros = tk.Toplevel(self.root)
+        ventana_numeros.title("Números Generados")
+        ventana_numeros.geometry("400x600")
+    
+        # Crear un Treeview para mostrar los números en columnas
+        columnas = ("Índice", "Número")
+        tree = ttk.Treeview(ventana_numeros, columns=columnas, show="headings", height=25)
+    
+        # Configurar encabezados y anchos de columnas
+        tree.heading("Índice", text="Índice")
+        tree.heading("Número", text="Número")
+        tree.column("Índice", width=20, anchor="center")
+        tree.column("Número", width=120, anchor="center")
+    
+        # Llenar el Treeview con los números generados
+        for i, numero in enumerate(self.numeros_generados, start=1):
+            tree.insert("", "end", values=(i, f"{numero:.4f}"))
+    
+        # Añadir un scrollbar vertical
+        scrollbar = ttk.Scrollbar(ventana_numeros, orient="vertical", command=tree.yview)
+        tree.configure(yscrollcommand=scrollbar.set)
+    
+        # Posicionar el Treeview y el scrollbar
+        tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    
+
     def crear_histograma(self, titulo):
         """Crea el histograma con los números generados"""
         # Limpiar gráfico anterior
@@ -272,28 +321,8 @@ class SimuladorDistribucionesApp:
                 f"{frecuencias_relativas[i]:.4f}"
             ))
 
-    
-    def crear_kde(self, titulo):
-        """Crea una gráfica de densidad KDE con los números generados"""
-        # Limpiar gráfico anterior
-        self.ax.clear()
-        
-        # Crear KDE
-        sns.kdeplot(self.numeros_generados, ax=self.ax, fill=True, color="blue", alpha=0.5)
-        
-        # Configurar etiquetas y título
-        self.ax.set_xlabel("Valor")
-        self.ax.set_ylabel("Densidad")
-        self.ax.set_title(f"Densidad de {titulo}\n({len(self.numeros_generados)} números)")
-        
-        # Añadir cuadrícula
-        self.ax.grid(axis='y', linestyle='--', alpha=0.7)
-        
-        # Aplicar cambios
-        self.fig.tight_layout()
-        self.canvas.draw()
 
-    def export_to_excel(self):
+    def export_frequency_to_excel(self):
         data = []
         for item in self.tree.get_children():
             data.append(self.tree.item(item)['values'])
@@ -305,6 +334,22 @@ class SimuladorDistribucionesApp:
             messagebox.showinfo("Éxito", "Datos exportados a datos.xlsx")
         except Exception as e:
             messagebox.showerror("Error", f"No se pudo exportar: {e}")
+
+
+    def export_numbers_to_excel(self):
+        """Exporta los números generados a un archivo Excel"""
+        try:
+            # Crear un DataFrame con los números generados
+            data = {"Índice": range(1, len(self.numeros_generados) + 1), 
+                    "Número": [f"{num:.4f}" for num in self.numeros_generados]}
+            df = pd.DataFrame(data)
+    
+            # Exportar a un archivo Excel
+            df.to_excel("numeros_generados.xlsx", index=False)
+            messagebox.showinfo("Éxito", "Números exportados a numeros_generados.xlsx")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo exportar: {e}")
+
 
 if __name__ == "__main__":
     root = tk.Tk()

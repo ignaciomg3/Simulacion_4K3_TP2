@@ -80,3 +80,9 @@ desktop.ini
 
 # Local settings
 *.local
+
+# Excel
+*.xlsx
+
+# Pycharm
+*.pyc

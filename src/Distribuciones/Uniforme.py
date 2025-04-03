@@ -33,6 +33,6 @@ def generar_uniforme(tamaño, a, b, generador=None):
         u = generador.siguiente()
         # Transformación lineal
         x = a + u * (b - a)
-        numeros_uniformes.append(x)
+        numeros_uniformes.append(round(x, 4))
     
     return numeros_uniformes

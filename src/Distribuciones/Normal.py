@@ -42,8 +42,8 @@ def generar_distribucion_normal(tamaño, mu, sigma, generador=None):
         z2 = math.sqrt(-2.0 * math.log(u1)) * math.sin(2.0 * math.pi * u2)
         
         # Transformar a la media y desviación estándar deseadas
-        numeros_normales.append(mu + sigma * z1)
+        numeros_normales.append(round(mu + sigma * z1, 4))
         if len(numeros_normales) < tamaño:  # Para manejar tamaños impares
-            numeros_normales.append(mu + sigma * z2)
+            numeros_normales.append(round(mu + sigma * z2, 4))
     
     return numeros_normales[:tamaño]  # Aseguramos que devolvemos exactamente tamaño elementos

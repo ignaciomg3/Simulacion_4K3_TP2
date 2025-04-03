@@ -31,6 +31,6 @@ def generar_exponencial(tamaño, lambd, generador=None):
             u = 0.9999999999
         # Fórmula de la transformada inversa para exponencial
         x = -math.log(1.0 - u) / lambd
-        numeros_exponenciales.append(x)
+        numeros_exponenciales.append(round(x, 4))
     
     return numeros_exponenciales
