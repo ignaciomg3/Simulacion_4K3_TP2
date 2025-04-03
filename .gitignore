@@ -86,3 +86,4 @@ desktop.ini
 
 # Pycharm
 *.pyc
+*__pycache__
