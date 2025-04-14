@@ -29,7 +29,10 @@ class SimuladorDistribucionesApp:
     def __init__(self, root):
         self.root = root    
         self.root.title("Simulador de Distribuciones Aleatorias")
-        self.root.geometry("1200x800")
+        self.root.geometry("1400x800")
+
+        # Maximizar la ventana al iniciar
+        self.root.state('zoomed')
 
         # Ajustar las columnas y filas de la ventana
         self.root.grid_columnconfigure(0, weight=2)  # Primera columna más grande
@@ -67,7 +70,7 @@ class SimuladorDistribucionesApp:
         
     def crear_frame_configuracion(self):
         """Crea el panel de configuración para seleccionar distribuciones y parámetros"""
-        frame_config = ttk.LabelFrame(self.root, text="Configuración", width=800, height=600)  # Tamaño inicial del frame
+        frame_config = ttk.LabelFrame(self.root, text="Configuración", width=900, height=600)  # Tamaño inicial del frame
         frame_config.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
         
         # Configurar el layout para que el frame ocupe más espacio
@@ -105,9 +108,13 @@ class SimuladorDistribucionesApp:
         self.entry_param2 = ttk.Entry(frame_config, textvariable=self.param2, font=("Arial", 12))
         self.entry_param2.grid(row=4, column=1, padx=10, pady=10, sticky="w")
         
+        #defino estilo 
+        style = ttk.Style()
+        style.configure("TButton", font=("Arial", 14), padding=(10, 10), background="#90EE90")  # Aumenta el padding y establece color verde claro
+
         # Botón para generar
         ttk.Button(frame_config, text="Generar Números", 
-                command=self.generar_numeros, width=20, style="TButton").grid(row=5, column=1, padx=(10, 20), pady=10, sticky="e")
+                command=self.generar_numeros).grid(row=5, column=1, padx=(10, 20), pady=10, sticky="e")
         
         # Botón para exportar frecuencias
         self.btn_export = ttk.Button(frame_config, text="Exportar frecuencias", command=self.export_frequency_to_excel, width=20, style="TButton")
