@@ -1,10 +1,3 @@
-"""
-Correcciones de la branch
-- Volver atras la funcion KDE
-- Generar los numeros con 4 decimales
-- Visualizar serie de números
-- Exportar serie de numeros a Excel
-"""
 import tkinter as tk
 from tkinter import ttk, messagebox
 import matplotlib.pyplot as plt
@@ -14,6 +7,7 @@ import pandas as pd
 import sys
 import os
 import seaborn as sns
+# Estas funciones no se usan
 from funciones import actualizar_etiquetas_parametros, generar_numeros, crear_kde
 
 # Añadir ruta del proyecto al PYTHONPATH para importaciones
@@ -231,7 +225,6 @@ class SimuladorDistribucionesApp:
                 self.numeros_generados = generar_distribucion_normal(cantidad, mu, sigma, self.generador)
                 titulo = f"Distribución Normal (μ={mu}, σ={sigma})"
             
-            # Generar KDE en lugar de histograma
             self.crear_histograma(titulo)
             self.crear_tabla_frecuencias()
         
@@ -379,13 +372,13 @@ if __name__ == "__main__":
     root = tk.Tk()
     app = SimuladorDistribucionesApp(root)
 
-    # Define a function to handle the window close event
+    # Funcion para terminar el programa al cerrar la ventana
     def on_closing():
         if messagebox.askokcancel("Salir", "¿Estás seguro de que deseas cerrar la aplicación?"):
             root.destroy()  # Close the Tkinter window
             sys.exit()  # Ensure the program terminates completely
 
-    # Bind the close event to the custom function
+    # Ejecuta on_closing al cerrar la ventana
     root.protocol("WM_DELETE_WINDOW", on_closing)
 
     root.mainloop()
