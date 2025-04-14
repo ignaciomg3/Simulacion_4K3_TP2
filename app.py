@@ -30,6 +30,12 @@ class SimuladorDistribucionesApp:
         self.root = root    
         self.root.title("Simulador de Distribuciones Aleatorias")
         self.root.geometry("1200x800")
+
+        # Ajustar las columnas y filas de la ventana
+        self.root.grid_columnconfigure(0, weight=2)  # Primera columna más grande
+        self.root.grid_columnconfigure(1, weight=3)  # Segunda columna más grande
+        self.root.grid_rowconfigure(0, weight=2)     # Primera fila más grande
+        self.root.grid_rowconfigure(1, weight=2)     # Segunda fila más grande
         
         # Variables para almacenar la configuración
         self.distribucion_seleccionada = tk.StringVar(value="Uniforme")
@@ -53,57 +59,68 @@ class SimuladorDistribucionesApp:
         self.crear_frame_configuracion()
         self.crear_frame_grafico()
         self.crear_frame_tabla()
+
+        
         
         # Actualizar etiquetas de parámetros según distribución inicial
         self.actualizar_etiquetas_parametros()
-    
-
+        
     def crear_frame_configuracion(self):
         """Crea el panel de configuración para seleccionar distribuciones y parámetros"""
-        frame_config = ttk.LabelFrame(self.root, text="Configuración")
+        frame_config = ttk.LabelFrame(self.root, text="Configuración", width=800, height=600)  # Tamaño inicial del frame
         frame_config.grid(row=0, column=0, padx=10, pady=10, sticky="nw")
         
+        # Configurar el layout para que el frame ocupe más espacio
+        self.root.grid_columnconfigure(0, weight=1)  # Asegura que la columna de la izquierda sea flexible
+        self.root.grid_rowconfigure(0, weight=1)     # Asegura que la fila de arriba sea flexible
+        
+        frame_config.grid_columnconfigure(0, weight=1, minsize=200)  # Aumentar el tamaño de la columna 0
+        frame_config.grid_columnconfigure(1, weight=2, minsize=400)  # Aumentar el tamaño de la columna 1
+        
         # Selector de distribución
-        ttk.Label(frame_config, text="Distribución:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        ttk.Label(frame_config, text="Distribución:", font=("Arial", 12)).grid(row=0, column=0, padx=10, pady=10, sticky="w")
         distribuciones = ["Uniforme", "Exponencial", "Normal"]
         combo_dist = ttk.Combobox(frame_config, textvariable=self.distribucion_seleccionada, 
-                                  values=distribuciones, state="readonly")
-        combo_dist.grid(row=0, column=1, padx=5, pady=5, sticky="w")
+                                values=distribuciones, state="readonly", font=("Arial", 12))
+        combo_dist.grid(row=0, column=1, padx=10, pady=10, sticky="w")
         combo_dist.bind("<<ComboboxSelected>>", self.actualizar_etiquetas_parametros)
         
         # Cantidad de números
-        ttk.Label(frame_config, text="Tamaño de muestra:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
-        ttk.Entry(frame_config, textvariable=self.cantidad_numeros).grid(row=1, column=1, padx=5, pady=5, sticky="w")
+        ttk.Label(frame_config, text="Tamaño de muestra:", font=("Arial", 12)).grid(row=1, column=0, padx=10, pady=10, sticky="w")
+        ttk.Entry(frame_config, textvariable=self.cantidad_numeros, font=("Arial", 12)).grid(row=1, column=1, padx=10, pady=10, sticky="w")
         
         # Número de intervalos para histograma
-        ttk.Label(frame_config, text="Número de intervalos:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        ttk.Label(frame_config, text="Número de intervalos:", font=("Arial", 12)).grid(row=2, column=0, padx=10, pady=10, sticky="w")
         intervalos = ["10", "15", "20", "30"]
         ttk.Combobox(frame_config, textvariable=self.num_intervalos, 
-                     values=intervalos, state="readonly").grid(row=2, column=1, padx=5, pady=5, sticky="w")
+                    values=intervalos, state="readonly", font=("Arial", 12)).grid(row=2, column=1, padx=10, pady=10, sticky="w")
         
         # Parámetros (etiquetas se actualizarán según la distribución)
-        self.lbl_param1 = ttk.Label(frame_config, text="Parámetro 1:")
-        self.lbl_param1.grid(row=3, column=0, padx=5, pady=5, sticky="w")
-        ttk.Entry(frame_config, textvariable=self.param1).grid(row=3, column=1, padx=5, pady=5, sticky="w")
+        self.lbl_param1 = ttk.Label(frame_config, text="Parámetro 1:", font=("Arial", 12))
+        self.lbl_param1.grid(row=3, column=0, padx=10, pady=10, sticky="w")
+        ttk.Entry(frame_config, textvariable=self.param1, font=("Arial", 12)).grid(row=3, column=1, padx=10, pady=10, sticky="w")
         
-        self.lbl_param2 = ttk.Label(frame_config, text="Parámetro 2:")
-        self.lbl_param2.grid(row=4, column=0, padx=5, pady=5, sticky="w")
-        self.entry_param2 = ttk.Entry(frame_config, textvariable=self.param2)
-        self.entry_param2.grid(row=4, column=1, padx=5, pady=5, sticky="w")
+        self.lbl_param2 = ttk.Label(frame_config, text="Parámetro 2:", font=("Arial", 12))
+        self.lbl_param2.grid(row=4, column=0, padx=10, pady=10, sticky="w")
+        self.entry_param2 = ttk.Entry(frame_config, textvariable=self.param2, font=("Arial", 12))
+        self.entry_param2.grid(row=4, column=1, padx=10, pady=10, sticky="w")
         
         # Botón para generar
         ttk.Button(frame_config, text="Generar Números", 
-               command=self.generar_numeros).grid(row=5, column=1, padx=(5, 20), pady=10, sticky="e")
+                command=self.generar_numeros, width=20, style="TButton").grid(row=5, column=1, padx=(10, 20), pady=10, sticky="e")
+        
         # Botón para exportar frecuencias
-        self.btn_export = ttk.Button(frame_config, text="Exportar frecuencias", command=self.export_frequency_to_excel)
+        self.btn_export = ttk.Button(frame_config, text="Exportar frecuencias", command=self.export_frequency_to_excel, width=20, style="TButton")
         self.btn_export.grid(row=5, column=0, padx=(20, 5), pady=10, sticky="w")
-        # Botón para exportar serie de numeros
-        self.btn_export = ttk.Button(frame_config, text="Exportar números", command=self.export_numbers_to_excel)
+        
+        # Botón para exportar serie de números
+        self.btn_export = ttk.Button(frame_config, text="Exportar números", command=self.export_numbers_to_excel, width=20, style="TButton")
         self.btn_export.grid(row=6, column=0, padx=(20, 5), pady=10, sticky="w")
-        # Boton para abrir ventana con numeros
+        
+        # Botón para abrir ventana con números
         ttk.Button(frame_config, text="Mostrar Números", 
-                   command=self.mostrar_numeros_generados).grid(row=6, column=1, padx=(5, 20), pady=5, sticky="e")
-    
+                command=self.mostrar_numeros_generados, width=20, style="TButton").grid(row=6, column=1, padx=(10, 20), pady=5, sticky="e")
+
 
     def crear_frame_grafico(self):
         """Crea el panel para mostrar el histograma"""
